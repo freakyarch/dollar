@@ -75,7 +75,6 @@ contract Comptroller is Setters {
     function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
         // 0-a. Baseline Pay out to Pool
         uint256 baselinePoolReward = newSupply.mul(Constants.getBaselineOraclePoolRatio()).div(100);
-        mintToPool(baselinePoolReward);
 
         // 0-b. Baseline Pay out to Treasury
         uint256 baselineTreasuryReward = newSupply.mul(Constants.getBaselineTreasuryRatio()).div(10000);
@@ -83,7 +82,6 @@ contract Comptroller is Setters {
 
 	// 0-b. Baseline Pay out to DAO
         uint256 baselineDAOReward = newSupply.mul(Constants.getBaselineDAORatio()).div(10000);
-        mintToDAO(baselineDAOReward);
 
         uint256 baselineRewards = baselinePoolReward.add(baselineTreasuryReward).add(baselineDAOReward);
         newSupply = newSupply > baselineRewards ? newSupply.sub(baselineRewards) : 0;
@@ -102,7 +100,7 @@ contract Comptroller is Setters {
 	// 2. Additional Payout to Pool
 	if (newSupply > 0) {
 		uint256 poolReward = newSupply.mul(Constants.getOraclePoolRatio()).div(100);
-		mintToPool(poolReward);
+		mintToPool(poolReward.add(baselinePoolReward));
 	}
 
 	uint256 rewards = baselineRewards.add(poolReward);
@@ -113,7 +111,7 @@ contract Comptroller is Setters {
             newSupply = 0;
         }
         if (newSupply > 0) {
-            mintToDAO(newSupply);
+            mintToDAO(newSupply.add(baselineDAOReward));
         }
 
         balanceCheck();
