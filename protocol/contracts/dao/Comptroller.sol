@@ -81,7 +81,7 @@ function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
         uint256 baselineTreasuryReward = newSupply.mul(Constants.getBaselineTreasuryRatio()).div(10000);
         mintToTreasury(baselineTreasuryReward);
 
-		// 0-b. Baseline Pay out to DAO
+	// 0-b. Baseline Pay out to DAO
         uint256 baselineDAOReward = newSupply.mul(Constants.getBaselineDAORatio()).div(10000);
         mintToDAO(baselineDAOReward);
 
@@ -99,16 +99,16 @@ function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
             newSupply = newSupply.sub(newRedeemable);
             }
 				
-		// 2. Additional Payout to Pool
-		if (newSupply > 0) {
-		    uint256 poolReward = newSupply.mul(Constants.getOraclePoolRatio()).div(100);
-		    mintToPool(poolReward);
-			}
+	// 2. Additional Payout to Pool
+	if (newSupply > 0) {
+		uint256 poolReward = newSupply.mul(Constants.getOraclePoolRatio()).div(100);
+		mintToPool(poolReward);
+	}
 
-		uint256 rewards = baselineRewards.add(poolReward);
+	uint256 rewards = baselineRewards.add(poolReward);
         newSupply = newSupply > rewards ? newSupply.sub(rewards) : 0;
 
-	    // 3. Balance Payout to DAO
+	// 3. Balance Payout to DAO
         if (totalBonded() == 0) {
             newSupply = 0;
         }
