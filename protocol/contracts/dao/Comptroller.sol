@@ -72,17 +72,21 @@ contract Comptroller is Setters {
         balanceCheck();
     }
 
-    function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
-        // 0-a. Pay out to Pool
-        uint256 poolReward = newSupply.mul(Constants.getOraclePoolRatio()).div(100);
-        mintToPool(poolReward);
+function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
+        // 0-a. Baseline Pay out to Pool
+        uint256 baselinePoolReward = newSupply.mul(Constants.getBaselineOraclePoolRatio()).div(100);
+        mintToPool(baselinePoolReward);
 
-        // 0-b. Pay out to Treasury
-        uint256 treasuryReward = newSupply.mul(Constants.getTreasuryRatio()).div(10000);
-        mintToTreasury(treasuryReward);
+        // 0-b. Baseline Pay out to Treasury
+        uint256 baselineTreasuryReward = newSupply.mul(Constants.getBaselineTreasuryRatio()).div(10000);
+        mintToTreasury(baselineTreasuryReward);
 
-        uint256 rewards = poolReward.add(treasuryReward);
-        newSupply = newSupply > rewards ? newSupply.sub(rewards) : 0;
+		// 0-b. Baseline Pay out to DAO
+        uint256 baselineDAOReward = newSupply.mul(Constants.getBaselineDAORatio()).div(10000);
+        mintToDAO(baselineDAOReward);
+
+        uint256 baselineRewards = baselinePoolReward.add(baselineTreasuryReward).add(baselineDAOReward);
+        newSupply = newSupply > baselineRewards ? newSupply.sub(baselineRewards) : 0;
 
         // 1. True up redeemable pool
         uint256 newRedeemable = 0;
@@ -93,9 +97,18 @@ contract Comptroller is Setters {
             newRedeemable = newRedeemable > newSupply ? newSupply : newRedeemable;
             mintToRedeemable(newRedeemable);
             newSupply = newSupply.sub(newRedeemable);
-        }
+            }
+				
+		// 2. Additional Payout to Pool
+		if (newSupply > 0) {
+		    uint256 poolReward = newSupply.mul(Constants.getOraclePoolRatio()).div(100);
+		    mintToPool(poolReward);
+			}
 
-        // 2. Payout to DAO
+		uint256 rewards = baselineRewards.add(poolReward);
+        newSupply = newSupply > rewards ? newSupply.sub(rewards) : 0;
+
+	    // 3. Balance Payout to DAO
         if (totalBonded() == 0) {
             newSupply = 0;
         }
@@ -107,7 +120,7 @@ contract Comptroller is Setters {
 
         return (newRedeemable, newSupply.add(rewards));
     }
-
+    
     function resetDebt(Decimal.D256 memory targetDebtRatio) internal returns (uint256) {
         uint256 targetDebt = targetDebtRatio.mul(dollar().totalSupply()).asUint256();
         uint256 currentDebt = totalDebt();
