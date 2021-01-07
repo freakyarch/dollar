@@ -72,8 +72,12 @@ library Constants {
     /* Regulator */
     uint256 private constant SUPPLY_CHANGE_LIMIT = 3e16; // 3%
     uint256 private constant COUPON_SUPPLY_CHANGE_LIMIT = 6e16; // 6%
-    uint256 private constant ORACLE_POOL_RATIO = 20; // 20%
-    uint256 private constant TREASURY_RATIO = 250; // 2.5%
+    uint256 private constant ORACLE_POOL_RATIO = 39; // 39%
+    
+    uint256 private constant BASELINE_ORACLE_POOL_RATIO = 10; // 10%
+    uint256 private constant BASELINE_DAO_RATIO = 10; // 10%
+    uint256 private constant BASELINE_TREASURY_RATIO = 100; // 1%
+
 
     /* Deployed */
     address private constant DAO_ADDRESS = address(0x443D2f2755DB5942601fa062Cc248aAA153313D3);
@@ -181,8 +185,16 @@ library Constants {
         return ORACLE_POOL_RATIO;
     }
 
-    function getTreasuryRatio() internal pure returns (uint256) {
-        return TREASURY_RATIO;
+    function getBaselineOraclePoolRatio() internal pure returns (uint256) {
+        return BASELINE_ORACLE_POOL_RATIO;
+    }
+
+    function getBaselineDAORatio() internal pure returns (uint256) {
+        return BASELINE_DAO_RATIO;
+    }
+
+    function getBaselineTreasuryRatio() internal pure returns (uint256) {
+        return BASELINE_TREASURY_RATIO;
     }
 
     function getChainId() internal pure returns (uint256) {
