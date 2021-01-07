@@ -72,7 +72,7 @@ library Constants {
     /* Regulator */
     uint256 private constant SUPPLY_CHANGE_LIMIT = 3e16; // 3%
     uint256 private constant COUPON_SUPPLY_CHANGE_LIMIT = 6e16; // 6%
-    uint256 private constant ORACLE_POOL_RATIO = 39; // 39%
+    uint256 private constant ORACLE_POOL_RATIO = 36.71; // 36.71%
     
     uint256 private constant BASELINE_ORACLE_POOL_RATIO = 10; // 10%
     uint256 private constant BASELINE_DAO_RATIO = 10; // 10%
