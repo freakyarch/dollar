@@ -72,7 +72,7 @@ contract Comptroller is Setters {
         balanceCheck();
     }
 
-function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
+    function increaseSupply(uint256 newSupply) internal returns (uint256, uint256) {
         // 0-a. Baseline Pay out to Pool
         uint256 baselinePoolReward = newSupply.mul(Constants.getBaselineOraclePoolRatio()).div(100);
         mintToPool(baselinePoolReward);
